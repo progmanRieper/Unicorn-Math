@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Addition - 1st Grade</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #f2d9e6;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: #800080;
+        }
+        header {
+            background-color: #ffb6c1;
+            color: white;
+            padding: 20px 0;
+            border-bottom: 5px solid #ff6f91;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            font-size: 36px;
+        }
+        header p {
+            font-size: 18px;
+        }
+        .content {
+            margin: 20px;
+        }
+        .question {
+            font-size: 28px;
+            margin: 20px 0;
+            color: #9932cc;
+        }
+        .answer-buttons {
+            margin: 20px 0;
+        }
+        .answer-buttons button {
+            font-size: 18px;
+            padding: 15px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 15px;
+            background-color: #ffb6c1;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+        .answer-buttons button:hover {
+            background-color: #ff6f91;
+            transform: scale(1.1);
+        }
+        .feedback {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .help-button {
+            display: block;
+            margin: 20px auto;
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: #ffc1e3;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .help-button:hover {
+            background-color: #ff99c8;
+        }
+        .help-area {
+            display: none;
+            margin: 20px;
+            font-size: 20px;
+            color: #4b0082;
+        }
+        .help-unicorn {
+            width: 100px;
+            height: auto;
+            margin: 10px;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: gray;
+        }
+        .unicorn {
+            width: 200px;
+            height: auto;
+            margin: 20px auto;
+        }
+        .counter {
+            font-size: 24px;
+            color: #ff6f91;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Learn Addition with Unicorns!</h1>
+        <p>Practice addition with magical unicorn fun!</p>
+    </header>
+
+    <div class="content">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Unicorn_and_Narwhal_by_Clara_Norell.png/800px-Unicorn_and_Narwhal_by_Clara_Norell.png" alt="Magical Unicorn" class="unicorn">
+        <div id="question-area" class="question"></div>
+        <div class="answer-buttons" id="answer-buttons"></div>
+        <button class="help-button" onclick="showHelp()">Help</button>
+        <div id="help-area" class="help-area">
+            <p>Here is how the addition looks:</p>
+            <div id="help-visual"></div>
+        </div>
+        <div id="feedback" class="feedback"></div>
+        <div class="counter">Correct on First Try: <span id="correct-counter">0</span></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Learn Addition with Unicorns. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const questionArea = document.getElementById("question-area");
+        const answerButtons = document.getElementById("answer-buttons");
+        const feedback = document.getElementById("feedback");
+        const helpArea = document.getElementById("help-area");
+        const helpVisual = document.getElementById("help-visual");
+        const correctCounter = document.getElementById("correct-counter");
+
+        let num1, num2, correctAnswer;
+        let correctFirstTryCount = 0;
+        let firstAttempt = true;
+        let wrongStreak = 0;
+
+        const colors = ["#f2d9e6", "#d4ecdd", "#fef6c9", "#cde7f0", "#d6c4f2", "#fce0f6", "#e8f2c6"];
+        let colorIndex = 0;
+
+        function generateQuestion() {
+            feedback.textContent = "";
+            helpArea.style.display = "none";
+            helpVisual.innerHTML = "";
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = num1 + num2;
+            questionArea.textContent = `What is ${num1} + ${num2}?`;
+            firstAttempt = true;
+            generateAnswerButtons();
+        }
+
+        function generateAnswerButtons() {
+            answerButtons.innerHTML = "";
+            const correctPosition = Math.floor(Math.random() * 3);
+
+            for (let i = 0; i < 3; i++) {
+                const button = document.createElement("button");
+                if (i === correctPosition) {
+                    button.textContent = correctAnswer;
+                    button.onclick = () => handleAnswer(true);
+                } else {
+                    let wrongAnswer;
+                    do {
+                        wrongAnswer = Math.floor(Math.random() * 19) + 1;
+                    } while (wrongAnswer === correctAnswer);
+                    button.textContent = wrongAnswer;
+                    button.onclick = () => handleAnswer(false);
+                }
+                answerButtons.appendChild(button);
+            }
+        }
+
+        function handleAnswer(isCorrect) {
+            if (isCorrect) {
+                feedback.textContent = "Correct! Great job, magical mathematician!";
+                feedback.style.color = "green";
+                if (firstAttempt) {
+                    correctFirstTryCount++;
+                    correctCounter.textContent = correctFirstTryCount;
+                    cycleBackgroundColor();
+                }
+                wrongStreak = 0; // Reset wrong streak on correct answer
+            } else {
+                feedback.textContent = "Oops! Try again, unicorn friend!";
+                feedback.style.color = "red";
+                firstAttempt = false;
+                wrongStreak++;
+                if (wrongStreak >= 3) {
+                    correctFirstTryCount = 0; // Reset correct counter
+                    correctCounter.textContent = correctFirstTryCount;
+                    wrongStreak = 0; // Reset wrong streak
+                }
+            }
+            setTimeout(generateQuestion, 2000);
+        }
+
+        function cycleBackgroundColor() {
+            colorIndex = (colorIndex + 1) % colors.length;
+            document.body.style.backgroundColor = colors[colorIndex];
+        }
+
+        function showHelp() {
+            helpArea.style.display = "block";
+            helpVisual.innerHTML = "";
+            for (let i = 0; i < num1; i++) {
+                const img = document.createElement("img");
+                img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Unicorn_and_Narwhal_by_Clara_Norell.png/800px-Unicorn_and_Narwhal_by_Clara_Norell.png";
+                img.alt = "Unicorn";
+                img.className = "help-unicorn";
+                helpVisual.appendChild(img);
+            }
+            const plusSign = document.createElement("p");
+            plusSign.textContent = "+";
+            plusSign.style.fontSize = "24px";
+            plusSign.style.color = "#9932cc";
+            helpVisual.appendChild(plusSign);
+            for (let i = 0; i < num2; i++) {
+                const img = document.createElement("img");
+                img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Unicorn_and_Narwhal_by_Clara_Norell.png/800px-Unicorn_and_Narwhal_by_Clara_Norell.png";
+                img.alt = "Unicorn";
+                img.className = "help-unicorn";
+                helpVisual.appendChild(img);
+            }
+        }
+
+        generateQuestion();
+    </script>
+</body>
+</html>
